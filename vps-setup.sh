@@ -26,24 +26,33 @@ apt update && apt upgrade -y
 echo -e "${GREEN}✓ System updated${NC}"
 echo ""
 
-echo -e "${YELLOW}Step 2: Installing Nginx...${NC}"
-apt install nginx -y
-systemctl start nginx
-systemctl enable nginx
-
-echo -e "${GREEN}✓ Nginx installed${NC}"
+echo -e "${YELLOW}Step 2: Installing Nginx (if not already installed)...${NC}"
+if ! command -v nginx &> /dev/null; then
+    apt install nginx -y
+    systemctl start nginx
+    systemctl enable nginx
+    echo -e "${GREEN}✓ Nginx installed${NC}"
+else
+    echo -e "${GREEN}✓ Nginx already installed${NC}"
+fi
 echo ""
 
-echo -e "${YELLOW}Step 3: Installing Git...${NC}"
-apt install git -y
-
-echo -e "${GREEN}✓ Git installed${NC}"
+echo -e "${YELLOW}Step 3: Installing Git (if not already installed)...${NC}"
+if ! command -v git &> /dev/null; then
+    apt install git -y
+    echo -e "${GREEN}✓ Git installed${NC}"
+else
+    echo -e "${GREEN}✓ Git already installed${NC}"
+fi
 echo ""
 
-echo -e "${YELLOW}Step 4: Installing Certbot for SSL...${NC}"
-apt install certbot python3-certbot-nginx -y
-
-echo -e "${GREEN}✓ Certbot installed${NC}"
+echo -e "${YELLOW}Step 4: Installing Certbot for SSL (if not already installed)...${NC}"
+if ! command -v certbot &> /dev/null; then
+    apt install certbot python3-certbot-nginx -y
+    echo -e "${GREEN}✓ Certbot installed${NC}"
+else
+    echo -e "${GREEN}✓ Certbot already installed${NC}"
+fi
 echo ""
 
 echo -e "${YELLOW}Step 5: Cloning website from GitHub...${NC}"
@@ -96,8 +105,21 @@ EOF
 # Enable site
 ln -sf /etc/nginx/sites-available/$DOMAIN /etc/nginx/sites-enabled/
 
-# Remove default site
-rm -f /etc/nginx/sites-enabled/default
+# DON'T remove default site if other projects exist
+# Only remove if user confirms
+if [ -f /etc/nginx/sites-enabled/default ]; then
+    echo ""
+    echo -e "${YELLOW}Note: Default Nginx site detected.${NC}"
+    echo "If you have other projects, keep it. Otherwise, you can remove it."
+    read -p "Remove default site? (y/N): " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        rm -f /etc/nginx/sites-enabled/default
+        echo "Default site removed"
+    else
+        echo "Default site kept"
+    fi
+fi
 
 # Test configuration
 nginx -t
@@ -109,11 +131,20 @@ echo -e "${GREEN}✓ Nginx configured${NC}"
 echo ""
 
 echo -e "${YELLOW}Step 7: Configuring firewall...${NC}"
-ufw allow 'Nginx Full'
-ufw allow OpenSSH
-echo "y" | ufw enable
 
-echo -e "${GREEN}✓ Firewall configured${NC}"
+# Check if UFW is already enabled
+if ufw status | grep -q "Status: active"; then
+    echo "Firewall already active, adding rules..."
+    ufw allow 'Nginx Full'
+    ufw allow OpenSSH
+    echo -e "${GREEN}✓ Firewall rules added${NC}"
+else
+    echo "Enabling firewall..."
+    ufw allow 'Nginx Full'
+    ufw allow OpenSSH
+    echo "y" | ufw enable
+    echo -e "${GREEN}✓ Firewall configured${NC}"
+fi
 echo ""
 
 echo -e "${YELLOW}Step 8: Setting up SSL certificate...${NC}"
