@@ -7,7 +7,8 @@ echo "Updating SharkDev Portfolio..."
 
 cd /var/www/sharkdev
 
-# Pull latest changes
+# Discard any local changes and pull latest from GitHub
+git reset --hard HEAD
 git pull origin main
 
 # Set permissions
