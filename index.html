@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SharkDev</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<link rel="icon" type="image/png" href="sharkdev-logo.png" />
+<style>
+  :root {
+    --bg: #07080d;
+    --bg2: #0b0d14;
+    --card: #0d0f18;
+    --border: rgba(220,180,0,0.13);
+    --accent: #d4a800;
+    --accent2: #f0c800;
+    --accent-dim: rgba(212,168,0,0.09);
+    --neon: 0 0 8px rgba(212,168,0,0.55), 0 0 24px rgba(212,168,0,0.22);
+    --neon-strong: 0 0 10px rgba(240,200,0,0.7), 0 0 32px rgba(212,168,0,0.35), 0 0 64px rgba(212,168,0,0.12);
+    --text: #eef0f5;
+    --text-muted: #6e7d92;
+    --text-dim: #3a4a5e;
+    --mono: 'Share Tech Mono', monospace;
+    --display: 'Syne', sans-serif;
+    --body: 'DM Sans', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background:
+      radial-gradient(ellipse 100% 70% at 0% 0%, rgba(140,100,0,0.22) 0%, transparent 50%),
+      radial-gradient(ellipse 80% 60% at 100% 100%, rgba(100,70,0,0.18) 0%, transparent 50%),
+      linear-gradient(160deg, #0d0f06 0%, #07080d 45%, #090b12 100%);
+    color: var(--text);
+    font-family: var(--body);
+    font-weight: 400;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 55% 35% at 75% 15%, rgba(212,168,0,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 45% 30% at 25% 85%, rgba(180,130,0,0.06) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(212,168,0,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(212,168,0,0.025) 1px, transparent 1px);
+    background-size: 44px 44px;
+    pointer-events: none; z-index: 0;
+  }
+  ::selection { background: rgba(212,168,0,0.25); color: #fff; }
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.1rem 4rem;
+    background: rgba(7,8,13,0.88);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo { font-family: var(--mono); font-size: 1.05rem; color: var(--accent); letter-spacing: 0.05em; text-decoration: none; text-shadow: var(--neon); }
+  .nav-logo span { color: var(--text-muted); text-shadow: none; }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a { font-family: var(--mono); font-size: 0.76rem; color: var(--text-muted); text-decoration: none; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s, text-shadow 0.2s; }
+  .nav-links a:hover { color: var(--accent); text-shadow: var(--neon); }
+
+  section { position: relative; z-index: 1; padding: 7rem 4rem; max-width: 1200px; margin: 0 auto; }
+
+  #hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding-top: 8rem; }
+  .hero-tag { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; text-shadow: var(--neon); }
+  .hero-tag::before { content: ''; display: inline-block; width: 28px; height: 1px; background: var(--accent); box-shadow: var(--neon); }
+  h1.hero-name { font-family: var(--display); font-size: clamp(3.5rem, 8vw, 7rem); font-weight: 800; line-height: 1.0; letter-spacing: -0.03em; color: var(--text); margin-bottom: 0.25rem; }
+  h1.hero-name .accent { color: var(--accent2); text-shadow: 0 0 30px rgba(240,200,0,0.4), 0 0 60px rgba(212,168,0,0.2); }
+  .hero-nickname { font-family: var(--mono); font-size: 1rem; color: var(--text-muted); margin-bottom: 2rem; letter-spacing: 0.04em; }
+  .hero-nickname span { color: var(--accent2); text-shadow: var(--neon); }
+  .hero-desc { font-size: 1.05rem; color: var(--text-muted); max-width: 560px; line-height: 1.85; margin-bottom: 3rem; font-weight: 300; }
+  .hero-desc strong { color: var(--accent); font-weight: 500; }
+  .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary { font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: #07080d; background: var(--accent2); border: none; padding: 0.9rem 2rem; cursor: pointer; text-decoration: none; transition: all 0.25s; clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%); box-shadow: var(--neon-strong); font-weight: 600; }
+  .btn-primary:hover { background: #fff0a0; box-shadow: 0 0 16px rgba(240,200,0,0.9), 0 0 40px rgba(212,168,0,0.5); transform: translateY(-2px); }
+  .btn-outline { font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent2); background: transparent; border: 1px solid var(--accent); padding: 0.9rem 2rem; cursor: pointer; text-decoration: none; transition: all 0.25s; box-shadow: var(--neon); }
+  .btn-outline:hover { background: var(--accent-dim); box-shadow: var(--neon-strong); transform: translateY(-2px); border-color: var(--accent2); }
+  .hero-stats { display: flex; gap: 3rem; margin-top: 5rem; padding-top: 3rem; border-top: 1px solid var(--border); }
+  .stat-num { font-family: var(--display); font-size: 2.2rem; font-weight: 800; color: var(--accent2); text-shadow: var(--neon); line-height: 1; margin-bottom: 0.3rem; }
+  .stat-label { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  .section-tag { font-family: var(--mono); font-size: 0.73rem; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem; text-shadow: var(--neon); }
+  .section-tag::before { content: ''; width: 18px; height: 1px; background: var(--accent); box-shadow: var(--neon); display: inline-block; }
+  h2.section-title { font-family: var(--display); font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; line-height: 1.1; color: var(--text); margin-bottom: 3.5rem; letter-spacing: -0.02em; }
+
+  #about { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
+  .about-text p { color: var(--text-muted); margin-bottom: 1.25rem; font-weight: 300; font-size: 1.02rem; line-height: 1.85; }
+  .about-text strong { color: var(--accent2); font-weight: 500; }
+  .about-card { background: var(--card); border: 1px solid var(--border); padding: 2rem; position: relative; overflow: hidden; box-shadow: inset 0 0 30px rgba(212,168,0,0.04); }
+  .about-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, var(--accent), transparent); box-shadow: 0 0 12px rgba(212,168,0,0.6); }
+  .about-card-header { font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim); margin-bottom: 1.5rem; letter-spacing: 0.1em; }
+  .skill-bar-item { margin-bottom: 1.2rem; }
+  .skill-bar-label { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 0.76rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+  .skill-bar-label span:last-child { color: var(--accent2); text-shadow: var(--neon); }
+  .skill-bar-track { height: 2px; background: rgba(255,255,255,0.05); }
+  .skill-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); box-shadow: 0 0 6px rgba(212,168,0,0.5); }
+
+  .skills-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: rgba(220,180,0,0.08); border: 1px solid var(--border); }
+  .skill-cell { background: var(--bg2); padding: 1.5rem; text-align: center; transition: background 0.2s, box-shadow 0.2s; }
+  .skill-cell:hover { background: var(--card); box-shadow: inset 0 0 20px rgba(212,168,0,0.07), 0 0 0 1px rgba(212,168,0,0.3); }
+  .skill-icon { font-size: 1.8rem; margin-bottom: 0.6rem; display: block; }
+  .skill-cell-name { font-family: var(--mono); font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+  .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .project-card { background: var(--card); border: 1px solid var(--border); padding: 2rem; position: relative; overflow: hidden; transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s; }
+  .project-card:hover { border-color: rgba(212,168,0,0.45); box-shadow: var(--neon-strong), inset 0 0 40px rgba(212,168,0,0.05); transform: translateY(-4px); }
+  .project-card.featured { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start; border-color: rgba(212,168,0,0.22); box-shadow: var(--neon); }
+  .project-card.featured:hover { box-shadow: var(--neon-strong), inset 0 0 60px rgba(212,168,0,0.06); }
+  .project-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, var(--accent), transparent); box-shadow: 0 0 10px rgba(212,168,0,0.45); }
+  .project-card::after { content: ''; position: absolute; bottom: 0; right: 0; width: 140px; height: 140px; background: radial-gradient(circle at bottom right, rgba(212,168,0,0.06), transparent 70%); pointer-events: none; }
+  .project-tag { font-family: var(--mono); font-size: 0.68rem; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; text-shadow: var(--neon); }
+  .dot { width: 6px; height: 6px; background: var(--accent2); border-radius: 50%; box-shadow: var(--neon); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.5;transform:scale(0.8);} }
+  .project-title { font-family: var(--display); font-size: 1.45rem; font-weight: 700; color: var(--text); margin-bottom: 0.75rem; letter-spacing: -0.02em; }
+  .project-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.75; margin-bottom: 1.1rem; font-weight: 300; }
+  .project-meta { display: flex; gap: 1.5rem; margin-bottom: 1.2rem; }
+  .project-meta-num { font-family: var(--display); font-size: 1.4rem; font-weight: 700; color: var(--accent2); text-shadow: var(--neon); }
+  .project-meta-label { font-family: var(--mono); font-size: 0.64rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; }
+  .feature-list { list-style: none; margin: 0.75rem 0 1rem; }
+  .feature-list li { font-size: 0.86rem; color: var(--text-muted); font-weight: 300; padding: 0.28rem 0 0.28rem 1.2rem; position: relative; }
+  .feature-list li::before { content: '▹'; position: absolute; left: 0; color: var(--accent); text-shadow: var(--neon); }
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.75rem; }
+  .tech-tag { font-family: var(--mono); font-size: 0.64rem; color: var(--text-dim); border: 1px solid rgba(212,168,0,0.1); padding: 0.2rem 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; transition: border-color 0.2s, color 0.2s; }
+  .tech-tag:hover { border-color: var(--accent); color: var(--accent); }
+  .project-link { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--mono); font-size: 0.72rem; color: var(--accent2); text-decoration: none; letter-spacing: 0.08em; text-transform: uppercase; text-shadow: var(--neon); margin-top: 0.75rem; transition: text-shadow 0.2s; }
+  .project-link:hover { text-shadow: var(--neon-strong); }
+
+  .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .service-card { background: var(--bg2); padding: 2.5rem 2rem; transition: background 0.2s, box-shadow 0.2s; position: relative; }
+  .service-card:hover { background: var(--card); box-shadow: inset 0 0 30px rgba(212,168,0,0.07), 0 0 0 1px rgba(212,168,0,0.25); }
+  .service-num { font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim); letter-spacing: 0.1em; margin-bottom: 2rem; }
+  .service-icon-wrap { width: 46px; height: 46px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 1.2rem; transition: border-color 0.2s, background 0.2s, box-shadow 0.2s; }
+  .service-card:hover .service-icon-wrap { border-color: var(--accent); background: var(--accent-dim); box-shadow: var(--neon); }
+  .service-title { font-family: var(--display); font-size: 1.05rem; font-weight: 600; color: var(--text); margin-bottom: 0.7rem; }
+  .service-desc { font-size: 0.86rem; color: var(--text-muted); line-height: 1.7; font-weight: 300; }
+
+  #contact { text-align: center; }
+  .contact-wrap { max-width: 680px; margin: 0 auto; }
+  .contact-email { font-family: var(--mono); font-size: 1rem; color: var(--text-muted); margin: 2.5rem auto; padding: 1.4rem 2rem; border: 1px solid var(--border); background: var(--card); display: inline-flex; align-items: center; gap: 0.75rem; transition: border-color 0.2s, color 0.2s, box-shadow 0.2s; text-decoration: none; }
+  .contact-email:hover { border-color: var(--accent); color: var(--accent2); box-shadow: var(--neon-strong); }
+  .social-links { display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+  .social-link { font-family: var(--mono); font-size: 0.74rem; color: var(--text-muted); text-decoration: none; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid var(--border); padding: 0.65rem 1.2rem; transition: all 0.2s; display: flex; align-items: center; gap: 0.45rem; }
+  .social-link:hover { color: var(--accent2); border-color: var(--accent); background: var(--accent-dim); box-shadow: var(--neon); }
+
+  footer { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 2rem 4rem; display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; }
+  .footer-copy { font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim); letter-spacing: 0.08em; }
+  .footer-copy span { color: var(--accent); text-shadow: var(--neon); }
+  .footer-right { font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim); }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 0 4rem; position: relative; z-index: 1; }
+  .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { gap: 1.5rem; }
+    section { padding: 5rem 1.5rem; }
+    #about { grid-template-columns: 1fr; gap: 3rem; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .project-card.featured { grid-template-columns: 1fr; }
+    .services-grid { grid-template-columns: 1fr; }
+    footer { padding: 1.5rem; flex-direction: column; gap: 1rem; text-align: center; }
+    .divider { margin: 0 1.5rem; }
+    .hero-stats { gap: 1.5rem; flex-wrap: wrap; }
+  }
+  @media (max-width: 600px) {
+    .nav-links { display: none; }
+    h1.hero-name { font-size: 3rem; }
+  }
+
+  /* Hero logo */
+  .hero-layout { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 3rem; }
+  .hero-logo-wrap {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    flex-shrink: 0;
+  }
+  .hero-logo-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 50%;
+    filter: drop-shadow(0 0 20px rgba(212,168,0,0.5)) drop-shadow(0 0 50px rgba(212,168,0,0.25));
+    animation: float 4s ease-in-out infinite;
+  }
+  .hero-logo-ring {
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 1px solid rgba(212,168,0,0.3);
+    box-shadow: 0 0 20px rgba(212,168,0,0.2), inset 0 0 20px rgba(212,168,0,0.05);
+    animation: ring-pulse 3s ease-in-out infinite;
+  }
+  .hero-logo-ring2 {
+    position: absolute;
+    inset: -18px;
+    border-radius: 50%;
+    border: 1px solid rgba(212,168,0,0.12);
+    animation: ring-pulse 3s ease-in-out infinite 0.5s;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes ring-pulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.02); }
+  }
+  @media (max-width: 900px) {
+    .hero-layout { grid-template-columns: 1fr; }
+    .hero-logo-wrap { width: 180px; height: 180px; margin: 0 auto 2rem; order: -1; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#hero" class="nav-logo">&lt;<span>SharkDev</span> /&gt;</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<section id="hero">
+  <div class="hero-layout">
+    <div class="hero-left">
+      <div class="hero-tag">Available for new projects</div>
+      <h1 class="hero-name">Khalid<br><span class="accent">SharkDev.</span></h1>
+      <p class="hero-nickname">aka <span>@SharkDevSol</span> · Co-Founder & CEO at Al-Khawarizm Technology</p>
+      <p class="hero-desc">Full-stack developer and software engineer based in <strong>Ethiopia</strong>. I build scalable web apps, enterprise systems, and digital products — from concept to deployment. I turn complex problems into clean, functional software.</p>
+      <div class="hero-cta">
+        <a href="https://skoolific.com" target="_blank" class="btn-primary">View Projects</a>
+        <a href="https://wa.me/message/FUG3WUTUG3OAD1" target="_blank" class="btn-outline">Message Me</a>
+      </div>
+    </div>
+    <div class="hero-logo-wrap">
+      <div class="hero-logo-ring2"></div>
+      <div class="hero-logo-ring"></div>
+      <img src="sharkdev-logo.png" alt="SharkDev Logo" />
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num">5+</div>
+      <div class="stat-label">Schools on Skoolific</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">Gov</div>
+      <div class="stat-label">Government Clients</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Self-Taught</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">1</div>
+      <div class="stat-label">Tech Company Founded</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section id="about" class="fade-in">
+  <div class="about-text">
+    <div class="section-tag">About Me</div>
+    <h2 class="section-title">Building things<br>that actually<br><span style="color:var(--accent2);text-shadow:var(--neon)">matter.</span></h2>
+    <p>I'm <strong>Khalid</strong> — a self-taught full-stack developer and software engineer with a deep passion for building technology that solves real problems. Everything I know about programming was learned online, through discipline, curiosity, and relentless practice.</p>
+    <p>I co-founded <strong>Al-Khawarizm</strong>, a technology company focused on enterprise-grade software for organizations across Ethiopia. Our flagship product, <strong>Skoolific</strong>, is actively transforming school operations across the country.</p>
+    <p>My client portfolio spans private businesses to <strong>government institutions</strong>, and every project gets the same treatment: clean architecture, reliable delivery, and software built to last.</p>
+  </div>
+  <div>
+    <div class="about-card">
+      <div class="about-card-header">// tech_proficiency.json</div>
+      <div class="skill-bar-item">
+        <div class="skill-bar-label"><span>Full-Stack Web Dev</span><span>95%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="width:95%"></div></div>
+      </div>
+      <div class="skill-bar-item">
+        <div class="skill-bar-label"><span>Desktop & App Dev</span><span>88%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="width:88%"></div></div>
+      </div>
+      <div class="skill-bar-item">
+        <div class="skill-bar-label"><span>Database Design</span><span>90%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="width:90%"></div></div>
+      </div>
+      <div class="skill-bar-item">
+        <div class="skill-bar-label"><span>System Architecture</span><span>85%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="width:85%"></div></div>
+      </div>
+      <div class="skill-bar-item">
+        <div class="skill-bar-label"><span>UI / UX</span><span>80%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="width:80%"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="fade-in" style="padding-top:5rem">
+  <div class="section-tag">Tech Stack</div>
+  <h2 class="section-title">Tools & Technologies</h2>
+  <div class="skills-grid">
+    <div class="skill-cell"><span class="skill-icon">🌐</span><div class="skill-cell-name">HTML / CSS</div></div>
+    <div class="skill-cell"><span class="skill-icon">⚡</span><div class="skill-cell-name">JavaScript</div></div>
+    <div class="skill-cell"><span class="skill-icon">⚛️</span><div class="skill-cell-name">React</div></div>
+    <div class="skill-cell"><span class="skill-icon">🐍</span><div class="skill-cell-name">Python</div></div>
+    <div class="skill-cell"><span class="skill-icon">🖥️</span><div class="skill-cell-name">Software Dev</div></div>
+    <div class="skill-cell"><span class="skill-icon">🗄️</span><div class="skill-cell-name">MySQL</div></div>
+    <div class="skill-cell"><span class="skill-icon">🍃</span><div class="skill-cell-name">MongoDB</div></div>
+    <div class="skill-cell"><span class="skill-icon">🟢</span><div class="skill-cell-name">Node.js</div></div>
+    <div class="skill-cell"><span class="skill-icon">🐙</span><div class="skill-cell-name">Git / GitHub</div></div>
+    <div class="skill-cell"><span class="skill-icon">🐳</span><div class="skill-cell-name">Docker</div></div>
+    <div class="skill-cell"><span class="skill-icon">☁️</span><div class="skill-cell-name">Cloud & VPS</div></div>
+    <div class="skill-cell"><span class="skill-icon">📱</span><div class="skill-cell-name">Mobile Dev</div></div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section id="projects" class="fade-in">
+  <div class="section-tag">Work</div>
+  <h2 class="section-title">Featured Projects</h2>
+  <div class="projects-grid">
+
+    <div class="project-card featured">
+      <div>
+        <div class="project-tag"><span class="dot"></span> Flagship Product · Live</div>
+        <h3 class="project-title">Skoolific</h3>
+        <p class="project-desc">A comprehensive, cloud-based school management ecosystem that connects administrators, teachers, students, and parents in one integrated platform — with four dedicated apps for each user type.</p>
+        <ul class="feature-list">
+          <li>Student & staff management, attendance, grading, and performance tracking</li>
+          <li>Automated report card generation and mark-locking system</li>
+          <li>Finance module: fee management, invoicing, payroll, and expense tracking</li>
+          <li>Real-time chat and push notifications for all stakeholders</li>
+          <li>Ethiopian calendar integration and full multi-language support (EN, AR, AM)</li>
+          <li>Role-based access control, biometric integration, and audit trails</li>
+        </ul>
+        <div class="tech-tags">
+          <span class="tech-tag">React</span>
+          <span class="tech-tag">Node.js</span>
+          <span class="tech-tag">MySQL</span>
+          <span class="tech-tag">PWA</span>
+          <span class="tech-tag">REST API</span>
+          <span class="tech-tag">Mobile-First</span>
+        </div>
+        <a href="https://iqrab3.skoolific.com" target="_blank" class="project-link">↗ View Live Demo</a>
+      </div>
+      <div>
+        <div class="project-meta">
+          <div class="project-meta-item">
+            <div class="project-meta-num">5+</div>
+            <div class="project-meta-label">Active Schools</div>
+          </div>
+          <div class="project-meta-item">
+            <div class="project-meta-num">4</div>
+            <div class="project-meta-label">Dedicated Apps</div>
+          </div>
+          <div class="project-meta-item">
+            <div class="project-meta-num">↑</div>
+            <div class="project-meta-label">More Orders In</div>
+          </div>
+        </div>
+        <p class="project-desc" style="font-size:0.87rem">Designed, built, and deployed end-to-end by Al-Khawarizm Technology. Skoolific reduces paperwork by up to 90%, automates daily school workflows, and gives every user real-time access from any device — no app store needed (PWA).</p>
+        <div class="tech-tags">
+          <span class="tech-tag">Amharic</span>
+          <span class="tech-tag">Arabic</span>
+          <span class="tech-tag">Offline-Ready</span>
+          <span class="tech-tag">Biometric</span>
+          <span class="tech-tag">Eth Calendar</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-tag"><span class="dot"></span> Government Client · Live</div>
+      <h3 class="project-title">Dire Dawa Auditor General</h3>
+      <p class="project-desc">A full-stack government web platform built to manage public-facing and internal communications for the Dire Dawa Office of the Auditor General. Developed as the sole full-stack developer on the project.</p>
+      <ul class="feature-list">
+        <li>Public portal for citizens to view news, official reports, and media</li>
+        <li>Admin dashboard to publish files, galleries, and announcements</li>
+        <li>Secure access control, media manager, and auto-generated reports</li>
+      </ul>
+      <div class="tech-tags">
+        <span class="tech-tag">Full-Stack</span>
+        <span class="tech-tag">Admin Panel</span>
+        <span class="tech-tag">Gov Platform</span>
+        <span class="tech-tag">Media Manager</span>
+      </div>
+      <a href="https://oddag.et" target="_blank" class="project-link">↗ oddag.et</a>
+    </div>
+
+    <div class="project-card">
+      <div class="project-tag">Al-Khawarizm · Various Clients</div>
+      <h3 class="project-title">Custom Business Systems</h3>
+      <p class="project-desc">A collection of tailored enterprise software solutions delivered to private-sector clients across Ethiopia — each designed around the specific workflow and needs of the business.</p>
+      <ul class="feature-list">
+        <li>Inventory management and billing systems</li>
+        <li>Custom CRMs and client-facing portals</li>
+        <li>Analytics dashboards and internal tools</li>
+      </ul>
+      <div class="tech-tags">
+        <span class="tech-tag">ERP</span>
+        <span class="tech-tag">CRM</span>
+        <span class="tech-tag">Dashboards</span>
+        <span class="tech-tag">Custom APIs</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section id="services" class="fade-in">
+  <div class="section-tag">What I Do</div>
+  <h2 class="section-title">Services</h2>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-num">01</div>
+      <div class="service-icon-wrap">🌐</div>
+      <div class="service-title">Web Development</div>
+      <p class="service-desc">Full-stack web applications built from scratch — responsive, fast, and production-ready. From landing pages to complex enterprise platforms.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-num">02</div>
+      <div class="service-icon-wrap">🖥️</div>
+      <div class="service-title">Software & Desktop Apps</div>
+      <p class="service-desc">Custom software and desktop applications tailored to your operations — intuitive interfaces backed by robust, maintainable logic.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-num">03</div>
+      <div class="service-icon-wrap">🏗️</div>
+      <div class="service-title">System Architecture</div>
+      <p class="service-desc">Designing scalable, robust architectures — databases, APIs, microservices — built right from day one so they grow with your business.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-num">04</div>
+      <div class="service-icon-wrap">📱</div>
+      <div class="service-title">Mobile Applications</div>
+      <p class="service-desc">Cross-platform mobile apps — PWAs and native — delivering app-quality experiences on any device, no app store required.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-num">05</div>
+      <div class="service-icon-wrap">🔗</div>
+      <div class="service-title">API & Integrations</div>
+      <p class="service-desc">REST and GraphQL API development, third-party integrations, and connecting systems that need to work seamlessly together.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-num">06</div>
+      <div class="service-icon-wrap">🚀</div>
+      <div class="service-title">Tech Consulting</div>
+      <p class="service-desc">Strategic technical guidance for startups and businesses — from choosing the right stack to planning a product roadmap that actually ships.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section id="contact" class="fade-in">
+  <div class="contact-wrap">
+    <div class="section-tag" style="justify-content:center">Contact</div>
+    <h2 class="section-title">Let's Build<br>Something <span style="color:var(--accent2);text-shadow:var(--neon-strong)">Great.</span></h2>
+    <p style="color:var(--text-muted);font-weight:300;max-width:460px;margin:0 auto;">Have a project in mind? I'm open to new clients, partnerships, and interesting challenges.</p>
+    <a href="mailto:sharkdevsolutions@gmail.com" class="contact-email">
+      <span style="color:var(--accent2);text-shadow:var(--neon)">✉</span> sharkdevsolutions@gmail.com
+    </a>
+    <div class="social-links">
+      <a href="https://github.com/SharkDevSol" target="_blank" class="social-link">⌥ GitHub</a>
+      <a href="https://www.upwork.com/freelancers/~017ee586fc9482536d?mp_source=share" target="_blank" class="social-link">💼 Upwork</a>
+      <a href="https://x.com/SharkDevS" target="_blank" class="social-link">𝕏 Twitter / X</a>
+      <a href="https://wa.me/message/FUG3WUTUG3OAD1" target="_blank" class="social-link">💬 WhatsApp</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-copy">© 2025 <span>Khalid · SharkDev</span> · Al-Khawarizm Technology</div>
+  <div class="footer-right">Built with precision &amp; purpose.</div>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
